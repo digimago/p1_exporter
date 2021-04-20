@@ -51,6 +51,10 @@ var (
 		Name: "p1_electricity_instantaneous_current_l3_a",
 		Help: "Instantaneous current L1 in A resolution.",
 	})
+	gasDelivered = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "p1_gas_gas_delivered_m3",
+		Help: "Meter reading of gas meter in M3",
+	})
 	config *serial.Config
 )
 
@@ -172,16 +176,15 @@ func recordMetrics() {
 				}
 				powerReceived.Set(value)
 			}
+			if rawValue, ok := telegram.MeterReadingGasDeliveredToClient(1); ok {
+				value, err := strconv.ParseFloat(rawValue, 64)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				gasDelivered.Set(value)
+			}
 
-			// 	i, ok := telegram.DataObjects["1-0:1.7.0"]
-			// 	if ok {
-			// 		value, err := strconv.ParseFloat(i.Value, 64)
-			// 		if err != nil {
-			// 			log.Error(err)
-			// 			continue
-			// 		}
-			// 		powerDelivered.Set(value)
-			// 	}
 		}
 	}()
 
@@ -222,6 +225,7 @@ func main() {
 	registry.MustRegister(instCurL1)
 	registry.MustRegister(instCurL2)
 	registry.MustRegister(instCurL3)
+	registry.MustRegister(gasDelivered)
 
 	handler := promhttp.HandlerFor(registry, promhttp.HandlerOpts{})
 
