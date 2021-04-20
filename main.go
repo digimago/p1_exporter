@@ -23,6 +23,10 @@ var (
 		Name: "p1_electricity_power_delivered_kw",
 		Help: "Actual electricity power delivered (+P) in 1 Watt resolution.",
 	})
+	powerReceived = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "p1_electricity_power_received_kw",
+		Help: "Actual electricity power received (+P) in 1 Watt resolution.",
+	})
 	instVoltL1 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_instantaneous_voltage_l1_v",
 		Help: "Instantaneous voltage L1 in V resolution.",
@@ -153,14 +157,22 @@ func recordMetrics() {
 				instCurL3.Set(value)
 			}
 
-			i, ok := telegram.DataObjects["1-0:1.7.0"]
-			if ok {
-				value, err := strconv.ParseFloat(i.Value, 64)
+			if rawValue, ok := telegram.ActualElectricityPowerDelivered(); ok {{
+				value, err := strconv.ParseFloat(rawValue, 64)
 				if err != nil {
 					log.Error(err)
 					continue
 				}
 				powerDelivered.Set(value)
+			}
+
+    		if rawValue, ok := telegram.ActualElectricityPowerReceived(); ok {
+				value, err := strconv.ParseFloat(rawValue, 64)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				powerReceived.Set(value)
 			}
 		}
 	}()
@@ -181,6 +193,10 @@ func main() {
 			"serial.port",
 			"Serial port for the connection to the P1 interface.",
 		).Required().String()
+		debugMode = kingpin.Flag(
+			"debug.mode",
+			"Enable printing to stdout",
+		).Default("false").String()
 	)
 
 	kingpin.HelpFlag.Short('h')
@@ -195,6 +211,7 @@ func main() {
 	registry := prometheus.NewRegistry()
 
 	registry.MustRegister(powerDelivered)
+	registry.MustRegister(powerReceived)
 	registry.MustRegister(instVoltL1)
 	registry.MustRegister(instVoltL2)
 	registry.MustRegister(instVoltL3)
@@ -224,6 +241,7 @@ func main() {
 	log.WithFields(log.Fields{
 		"listen_address": *listenAddress,
 		"metrics_path":   *metricsPath,
+		"debug_mode":   *debugMode,
 	}).Info("Listing on " + *listenAddress)
 
 	if err := http.ListenAndServe(*listenAddress, nil); err != nil {
