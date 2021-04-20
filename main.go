@@ -156,8 +156,7 @@ func recordMetrics() {
 				}
 				instCurL3.Set(value)
 			}
-
-			if rawValue, ok := telegram.ActualElectricityPowerDelivered(); ok {{
+			if rawValue, ok := telegram.ActualElectricityPowerDelivered(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
 				if err != nil {
 					log.Error(err)
@@ -165,8 +164,7 @@ func recordMetrics() {
 				}
 				powerDelivered.Set(value)
 			}
-
-    		if rawValue, ok := telegram.ActualElectricityPowerReceived(); ok {
+			if rawValue, ok := telegram.ActualElectricityPowerReceived(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
 				if err != nil {
 					log.Error(err)
@@ -174,6 +172,16 @@ func recordMetrics() {
 				}
 				powerReceived.Set(value)
 			}
+
+			// 	i, ok := telegram.DataObjects["1-0:1.7.0"]
+			// 	if ok {
+			// 		value, err := strconv.ParseFloat(i.Value, 64)
+			// 		if err != nil {
+			// 			log.Error(err)
+			// 			continue
+			// 		}
+			// 		powerDelivered.Set(value)
+			// 	}
 		}
 	}()
 
@@ -193,10 +201,6 @@ func main() {
 			"serial.port",
 			"Serial port for the connection to the P1 interface.",
 		).Required().String()
-		debugMode = kingpin.Flag(
-			"debug.mode",
-			"Enable printing to stdout",
-		).Default("false").String()
 	)
 
 	kingpin.HelpFlag.Short('h')
@@ -241,7 +245,6 @@ func main() {
 	log.WithFields(log.Fields{
 		"listen_address": *listenAddress,
 		"metrics_path":   *metricsPath,
-		"debug_mode":   *debugMode,
 	}).Info("Listing on " + *listenAddress)
 
 	if err := http.ListenAndServe(*listenAddress, nil); err != nil {
