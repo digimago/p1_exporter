@@ -25,7 +25,7 @@ var (
 	})
 	powerReceived = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_power_received_kw",
-		Help: "Actual electricity power received (+P) in 1 Watt resolution.",
+		Help: "Actual electricity power received (-P) in 1 Watt resolution.",
 	})
 	instVoltL1 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_instantaneous_voltage_l1_v",
