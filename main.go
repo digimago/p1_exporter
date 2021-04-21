@@ -27,19 +27,19 @@ var (
 		Name: "p1_electricity_power_received_kw",
 		Help: "Actual electricity power received (-P) in 1 Watt resolution.",
 	})
-	powerDeliveredMeterT1 = promauto.NewCounter(prometheus.CounterOpts{
+	powerDeliveredMeterT1 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_power_meter_delivered_tariff1_kwh",
 		Help: "Meter reading of electricity power delivered (+P) in 1 KWh resolution.",
 	})
-	powerDeliveredMeterT2 = promauto.NewCounter(prometheus.CounterOpts{
+	powerDeliveredMeterT2 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_power_meter_delivered_tariff2_kwh",
 		Help: "Meter reading of electricity power delivered (+P) in 1 KWh resolution.",
 	})
-	powerReceivedMeterT1 = promauto.NewCounter(prometheus.CounterOpts{
+	powerReceivedMeterT1 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_power_meter_received_tariff1_kwh",
 		Help: "Meter reading of electricity power received (-P) in 1 KWh resolution.",
 	})
-	powerReceivedMeterT2 = promauto.NewCounter(prometheus.CounterOpts{
+	powerReceivedMeterT2 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_power_meter_received_tariff2_kwh",
 		Help: "Meter reading of electricity power received (-P) in 1 KWh resolution.",
 	})
@@ -67,7 +67,7 @@ var (
 		Name: "p1_electricity_instantaneous_current_l3_a",
 		Help: "Instantaneous current L1 in A resolution.",
 	})
-	gasDelivered = promauto.NewCounter(prometheus.CounterOpts{
+	gasDelivered = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_gas_gas_delivered_m3",
 		Help: "Meter reading of gas meter in M3",
 	})
@@ -198,7 +198,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				gasDelivered.Add(value)
+				gasDelivered.Set(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredToClientTariff1(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -206,7 +206,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerDeliveredMeterT1.Add(value)
+				powerDeliveredMeterT1.Set(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredToClientTariff2(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -214,7 +214,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerDeliveredMeterT2.Add(value)
+				powerDeliveredMeterT2.Set(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredByClientTariff1(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -222,7 +222,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerReceivedMeterT1.Add(value)
+				powerReceivedMeterT1.Set(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredByClientTariff2(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -230,7 +230,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerReceivedMeterT2.Add(value)
+				powerReceivedMeterT2.Set(value)
 			}
 
 		}
