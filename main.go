@@ -27,6 +27,22 @@ var (
 		Name: "p1_electricity_power_received_kw",
 		Help: "Actual electricity power received (-P) in 1 Watt resolution.",
 	})
+	powerDeliveredMeterT1 = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "p1_electricity_power_meter_delivered_tariff1_kwh",
+		Help: "Meter reading of electricity power delivered (+P) in 1 KWh resolution.",
+	})
+	powerDeliveredMeterT2 = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "p1_electricity_power_meter_delivered_tariff2_kwh",
+		Help: "Meter reading of electricity power delivered (+P) in 1 KWh resolution.",
+	})
+	powerReceivedMeterT1 = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "p1_electricity_power_meter_received_tariff1_kwh",
+		Help: "Meter reading of electricity power received (-P) in 1 KWh resolution.",
+	})
+	powerReceivedMeterT2 = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "p1_electricity_power_meter_received_tariff2_kwh",
+		Help: "Meter reading of electricity power received (-P) in 1 KWh resolution.",
+	})
 	instVoltL1 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "p1_electricity_instantaneous_voltage_l1_v",
 		Help: "Instantaneous voltage L1 in V resolution.",
@@ -184,6 +200,38 @@ func recordMetrics() {
 				}
 				gasDelivered.Set(value)
 			}
+			if rawValue, ok := telegram.MeterReadingElectricityDeliveredToClientTariff1(); ok {
+				value, err := strconv.ParseFloat(rawValue, 64)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				powerDeliveredMeterT1.Set(value)
+			}
+			if rawValue, ok := telegram.MeterReadingElectricityDeliveredToClientTariff2(); ok {
+				value, err := strconv.ParseFloat(rawValue, 64)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				powerDeliveredMeterT2.Set(value)
+			}
+			if rawValue, ok := telegram.MeterReadingElectricityDeliveredByClientTariff1(); ok {
+				value, err := strconv.ParseFloat(rawValue, 64)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				powerReceivedMeterT1.Set(value)
+			}
+			if rawValue, ok := telegram.MeterReadingElectricityDeliveredByClientTariff2(); ok {
+				value, err := strconv.ParseFloat(rawValue, 64)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				powerReceivedMeterT2.Set(value)
+			}
 
 		}
 	}()
@@ -226,6 +274,10 @@ func main() {
 	registry.MustRegister(instCurL2)
 	registry.MustRegister(instCurL3)
 	registry.MustRegister(gasDelivered)
+	registry.MustRegister(powerDeliveredMeterT1)
+	registry.MustRegister(powerDeliveredMeterT2)
+	registry.MustRegister(powerReceivedMeterT1)
+	registry.MustRegister(powerReceivedMeterT2)
 
 	handler := promhttp.HandlerFor(registry, promhttp.HandlerOpts{})
 
