@@ -198,7 +198,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				gasDelivered.Set(value)
+				gasDelivered.Add(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredToClientTariff1(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -206,7 +206,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerDeliveredMeterT1.Set(value)
+				powerDeliveredMeterT1.Add(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredToClientTariff2(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -214,7 +214,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerDeliveredMeterT2.Set(value)
+				powerDeliveredMeterT2.Add(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredByClientTariff1(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -222,7 +222,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerReceivedMeterT1.Set(value)
+				powerReceivedMeterT1.Add(value)
 			}
 			if rawValue, ok := telegram.MeterReadingElectricityDeliveredByClientTariff2(); ok {
 				value, err := strconv.ParseFloat(rawValue, 64)
@@ -230,7 +230,7 @@ func recordMetrics() {
 					log.Error(err)
 					continue
 				}
-				powerReceivedMeterT2.Set(value)
+				powerReceivedMeterT2.Add(value)
 			}
 
 		}
