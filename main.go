@@ -27,19 +27,19 @@ var (
 		Name: "p1_electricity_power_received_kw",
 		Help: "Actual electricity power received (-P) in 1 Watt resolution.",
 	})
-	powerDeliveredMeterT1 = promauto.NewGauge(prometheus.GaugeOpts{
+	powerDeliveredMeterT1 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "p1_electricity_power_meter_delivered_tariff1_kwh",
 		Help: "Meter reading of electricity power delivered (+P) in 1 KWh resolution.",
 	})
-	powerDeliveredMeterT2 = promauto.NewGauge(prometheus.GaugeOpts{
+	powerDeliveredMeterT2 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "p1_electricity_power_meter_delivered_tariff2_kwh",
 		Help: "Meter reading of electricity power delivered (+P) in 1 KWh resolution.",
 	})
-	powerReceivedMeterT1 = promauto.NewGauge(prometheus.GaugeOpts{
+	powerReceivedMeterT1 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "p1_electricity_power_meter_received_tariff1_kwh",
 		Help: "Meter reading of electricity power received (-P) in 1 KWh resolution.",
 	})
-	powerReceivedMeterT2 = promauto.NewGauge(prometheus.GaugeOpts{
+	powerReceivedMeterT2 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "p1_electricity_power_meter_received_tariff2_kwh",
 		Help: "Meter reading of electricity power received (-P) in 1 KWh resolution.",
 	})
@@ -67,7 +67,7 @@ var (
 		Name: "p1_electricity_instantaneous_current_l3_a",
 		Help: "Instantaneous current L1 in A resolution.",
 	})
-	gasDelivered = promauto.NewGauge(prometheus.GaugeOpts{
+	gasDelivered = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "p1_gas_gas_delivered_m3",
 		Help: "Meter reading of gas meter in M3",
 	})
